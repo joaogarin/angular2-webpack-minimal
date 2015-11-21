@@ -39,7 +39,7 @@ module.exports = {
     inline: true,
     colors: true,
     historyApiFallback: true,
-    contentBase: 'src/app',
+    contentBase: 'src/public',
     publicPath: '/__build__'
   },
 
@@ -60,7 +60,7 @@ module.exports = {
 
   // Config for our build files
   output: {
-    path: root('__build__'),
+    path: 'src/public/__build__',
     filename: '[name].js',
     sourceMapFilename: '[name].js.map',
     chunkFilename: '[id].chunk.js'
