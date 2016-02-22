@@ -1,148 +1,120 @@
 // @AngularClass
 
 /*
- * Helper
- * env(), getBanner(), root(), and rootDir()
- * are defined at the bottom
+ * Helper: root(), and rootDir() are defined at the bottom
  */
-var sliceArgs = Function.prototype.call.bind(Array.prototype.slice);
-var toString  = Function.prototype.call.bind(Object.prototype.toString);
-var NODE_ENV  = 'development';
-var pkg = require('./package.json');
-
-// Node
 var path = require('path');
-
-// NPM
 var webpack = require('webpack');
+var CopyWebpackPlugin  = require('copy-webpack-plugin');
+var HtmlWebpackPlugin  = require('html-webpack-plugin');
+var ENV = process.env.ENV = process.env.NODE_ENV = 'development';
 
-// Webpack Plugins
-var CommonsChunkPlugin   = webpack.optimize.CommonsChunkPlugin;
-
+var metadata = {
+  title: 'Angular2 Webpack Starter',
+  baseUrl: '/',
+  host: 'localhost',
+  port: 3000,
+  ENV: ENV
+};
 /*
  * Config
  */
 module.exports = {
+  // static data for index.html
+  metadata: metadata,
+  // for faster builds use 'eval'
   devtool: 'source-map',
   debug: true,
-  cache: true,
+  // cache: false,
 
-  verbose: true,
-  displayErrorDetails: true,
-  stats: {
-    colors: true,
-    reasons: true
-  },
-
-  // our Development Server config
-  devServer: {
-    inline: true,
-    colors: true,
-    historyApiFallback: true,
-    contentBase: 'src/public',
-    publicPath: '/__build__'
-  },
-
-  //
-  entry: {
-    'angular2': [
-      // Angular 2 Deps
-      'zone.js',
-      'reflect-metadata',
-      // to ensure these modules are grouped together in one file
-      'angular2/angular2',
-      'angular2/core',
-    ],
-    'app': [
-      './src/app/bootstrap'
-    ]
-  },
+  // our angular app
+  entry: { 'polyfills': './src/polyfills.ts', 'main': './src/main.ts' },
 
   // Config for our build files
   output: {
-    path: 'src/public/__build__',
-    filename: '[name].js',
-    sourceMapFilename: '[name].js.map',
+    path: root('dist'),
+    filename: '[name].bundle.js',
+    sourceMapFilename: '[name].map',
     chunkFilename: '[id].chunk.js'
-    // publicPath: 'http://mycdn.com/'
   },
 
   resolve: {
-    root: __dirname,
-    extensions: ['','.ts','.js','.json'],
+    // ensure loader extensions match
+    extensions: prepend(['.ts','.js','.json','.css','.html'], '.async') // ensure .async.ts etc also works
   },
 
   module: {
     loaders: [
-      { test: /\.css$/,   loader: 'raw' },
+      // Support Angular 2 async routes via .async.ts
+      { test: /\.async\.ts$/, loaders: ['es6-promise-loader', 'ts-loader'], exclude: [ /\.(spec|e2e)\.ts$/ ] },
 
-      { test: /\.ts$/,    loader: 'ts',
-        query: {
-          'ignoreDiagnostics': [
-            // 2300, // 2300 -> Duplicate identifier
-            // 2309 // 2309 -> An export assignment cannot be used in a module with other exported elements.
-          ]
-        },
-        exclude: [
-          /\.min\.js$/,
-          /\.spec\.ts$/,
-          /\.e2e\.ts$/,
-          /web_modules/,
-          /test/,
-          /node_modules/
-        ]
-      },
-    ],
-    noParse: [
-      /rtts_assert\/src\/rtts_assert/,
-      /reflect-metadata/
+      // Support for .ts files.
+      { test: /\.ts$/, loader: 'ts-loader', exclude: [ /\.(spec|e2e|async)\.ts$/ ] },
+
+      // Support for *.json files.
+      { test: /\.json$/,  loader: 'json-loader' },
+
+      // Support for CSS as raw text
+      { test: /\.css$/,   loader: 'raw-loader' },
+
+      // support for .html as raw text
+      { test: /\.html$/,  loader: 'raw-loader', exclude: [ root('src/index.html') ] }
+
+      // if you add a loader include the resolve file extension above
     ]
   },
 
   plugins: [
-    new CommonsChunkPlugin({
-      name: 'angular2',
-      minChunks: Infinity,
-      filename: 'angular2.js'
-    }),
-    new CommonsChunkPlugin({
-      name: 'common',
-      filename: 'common.js'
+    new webpack.optimize.OccurenceOrderPlugin(true),
+    new webpack.optimize.CommonsChunkPlugin({ name: 'polyfills', filename: 'polyfills.bundle.js', minChunks: Infinity }),
+    // static assets
+    new CopyWebpackPlugin([ { from: 'src/assets', to: 'assets' } ]),
+    // generating html
+    new HtmlWebpackPlugin({ template: 'src/index.html' }),
+    // replace
+    new webpack.DefinePlugin({
+      'process.env': {
+        'ENV': JSON.stringify(metadata.ENV),
+        'NODE_ENV': JSON.stringify(metadata.ENV)
+      }
     })
   ],
 
-  /*
-   * When using `templateUrl` and `styleUrls` please use `__filename`
-   * rather than `module.id` for `moduleId` in `@View`
-   */
-  node: {
-    crypto: false,
-    __filename: true
-  }
+  // Other module loader config
+  tslint: {
+    emitErrors: false,
+    failOnHint: false,
+    resourcePath: 'src'
+  },
+  // our Webpack Development Server config
+  devServer: {
+    port: metadata.port,
+    host: metadata.host,
+    // contentBase: 'src/',
+    historyApiFallback: true,
+    watchOptions: { aggregateTimeout: 300, poll: 1000 }
+  },
+  // we need this due to problems with es6-shim
+  node: {global: 'window', progress: false, crypto: 'empty', module: false, clearImmediate: false, setImmediate: false}
 };
 
 // Helper functions
 
-function env(configEnv) {
-  if (configEnv === undefined) { return configEnv; }
-  switch (toString(configEnv[NODE_ENV])) {
-    case '[object Object]'    : return Object.assign({}, configEnv.all || {}, configEnv[NODE_ENV]);
-    case '[object Array]'     : return [].concat(configEnv.all || [], configEnv[NODE_ENV]);
-    case '[object Undefined]' : return configEnv.all;
-    default                   : return configEnv[NODE_ENV];
-  }
-}
-
-function getBanner() {
-  return 'Angular2 Webpack Starter v'+ pkg.version +' by @gdi2990 from @AngularClass';
-}
-
 function root(args) {
-  args = sliceArgs(arguments, 0);
+  args = Array.prototype.slice.call(arguments, 0);
   return path.join.apply(path, [__dirname].concat(args));
 }
 
+function prepend(extensions, args) {
+  args = args || [];
+  if (!Array.isArray(args)) { args = [args] }
+  return extensions.reduce(function(memo, val) {
+    return memo.concat(val, args.map(function(prefix) {
+      return prefix + val
+    }));
+  }, ['']);
+}
 function rootNode(args) {
-  args = sliceArgs(arguments, 0);
+  args = Array.prototype.slice.call(arguments, 0);
   return root.apply(path, ['node_modules'].concat(args));
 }
