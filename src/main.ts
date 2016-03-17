@@ -31,11 +31,11 @@ import {App} from './app/app';
  */
 export function main() {
     return browser.bootstrap(App, [
-            ...ENV_PROVIDERS,
-            ...HTTP_PROVIDERS,
-            ...ROUTER_PROVIDERS,
-            ngCore.provide(LocationStrategy, { useClass: HashLocationStrategy })
-        ])
+        ...ENV_PROVIDERS,
+        ...HTTP_PROVIDERS,
+        ...ROUTER_PROVIDERS,
+        ngCore.provide(LocationStrategy, { useClass: HashLocationStrategy })
+    ])
         .catch(err => console.error(err));
 }
 
@@ -57,9 +57,9 @@ function bootstrapDomReady() {
     return document.addEventListener('DOMContentLoaded', main);
 }
 
-if ('development' === process.env.ENV) {
+if ('development' === ENV) {
     // activate hot module reload
-    if (process.env.HMR) {
+    if (HMR) {
         if (document.readyState === 'complete') {
             main();
         } else {

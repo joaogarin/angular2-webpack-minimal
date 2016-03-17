@@ -13,12 +13,31 @@ import {Component} from 'angular2/core';
     // The template for our app
     template: `
     <div>
-       My app
+       <h1>{{name}}</h1>
+       <input [(ngModel)]="name" />
+    </div>
+    <br/>
+    <div>
+       <span>{{counter}}</span>
+       <button (click)="incrementCounter()">Increment</button>
     </div>
     `
 })
 export class App {
-    onInit() {
+    name:string;
+    counter: number;
+    
+    constructor(){
+        this.name = "Angular3 Minimal";
+        this.counter = 0;
+    }
+    
+    incrementCounter(){
+        let newCounter = this.counter + 1;
+        this.counter = newCounter;
+    }
+    
+    ngOnInit() {
         // Our API
     }
 }
