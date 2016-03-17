@@ -28,7 +28,7 @@ export class App {
     counter: number;
     
     constructor(){
-        this.name = "Angular3 Minimal";
+        this.name = "Angular2 Minimal";
         this.counter = 0;
     }
     
