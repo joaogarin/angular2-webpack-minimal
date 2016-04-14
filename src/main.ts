@@ -57,18 +57,17 @@ function bootstrapDomReady() {
     return document.addEventListener('DOMContentLoaded', main);
 }
 
-if ('development' === ENV) {
+/*
+ * Hot Module Reload
+ * experimental version by @gdi2290
+ * 
+ * Checks for settings in the webpack config so that knows if Hot module reloading should be used
+ */
+if ('development' === ENV && HMR === true) {
     // activate hot module reload
-    if (HMR) {
-        if (document.readyState === 'complete') {
-            main();
-        } else {
-            bootstrapDomReady();
-        }
-        module.hot.accept();
-    } else {
-        bootstrapDomReady();
-    }
+    let ngHmr = require('angular2-hmr');
+    ngHmr.hotModuleReplacement(main, module);
 } else {
-    bootstrapDomReady();
+    // bootstrap when documetn is ready
+    document.addEventListener('DOMContentLoaded', () => main());
 }
