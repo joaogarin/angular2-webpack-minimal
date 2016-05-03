@@ -4,10 +4,10 @@
 // run `typings install x` where `x` is your module
 
 // Angular 2
-import 'angular2/platform/browser';
-import 'angular2/core';
-import 'angular2/http';
-import 'angular2/router';
+import '@angular/platform-browser';
+import '@angular/core';
+import '@angular/http';
+import '@angular/router';
 
 // RxJS
 import 'rxjs/add/operator/map';
@@ -21,4 +21,3 @@ if ('production' === ENV) {
   // Development
 
 }
-

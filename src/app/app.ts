@@ -1,7 +1,7 @@
 /*
  * Angular 2 decorators and services
  */
-import {Component} from 'angular2/core';
+import {Component} from '@angular/core';
 
 /*
  * App Component
@@ -26,17 +26,17 @@ import {Component} from 'angular2/core';
 export class App {
     name:string;
     counter: number;
-    
+
     constructor(){
         this.name = "Angular2 Minimal";
         this.counter = 0;
     }
-    
+
     incrementCounter(){
         let newCounter = this.counter + 1;
         this.counter = newCounter;
     }
-    
+
     ngOnInit() {
         // Our API
     }

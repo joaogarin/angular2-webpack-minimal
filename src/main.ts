@@ -1,22 +1,25 @@
 /*
  * Providers provided by Angular
  */
-import * as ngCore from 'angular2/core';
-import * as browser from 'angular2/platform/browser';
-import {ROUTER_PROVIDERS, LocationStrategy, HashLocationStrategy} from 'angular2/router';
-import {HTTP_PROVIDERS} from 'angular2/http';
+import {provide, enableProdMode} from '@angular/core';
+import * as browser from '@angular/platform-browser';
+import {bootstrap} from '@angular/platform-browser-dynamic'
+
+// Angular 2
+import {LocationStrategy, HashLocationStrategy} from '@angular/common';
+
+//ROUTER
+import {ROUTER_PROVIDERS} from '@angular/router-deprecated';
+
+//HTTP
+import {HTTP_PROVIDERS} from '@angular/http';
 
 /*
  * App Environment Providers
  * providers that only live in certain environment
  */
-const ENV_PROVIDERS = [];
-
 if ('production' === process.env.ENV) {
-    ngCore.enableProdMode();
-    ENV_PROVIDERS.push(browser.ELEMENT_PROBE_PROVIDERS_PROD_MODE);
-} else {
-    ENV_PROVIDERS.push(browser.ELEMENT_PROBE_PROVIDERS);
+  enableProdMode();
 }
 
 /*
@@ -30,13 +33,12 @@ import {App} from './app/app';
  * our Services and Providers into Angular's dependency injection
  */
 export function main() {
-    return browser.bootstrap(App, [
-        ...ENV_PROVIDERS,
-        ...HTTP_PROVIDERS,
-        ...ROUTER_PROVIDERS,
-        ngCore.provide(LocationStrategy, { useClass: HashLocationStrategy })
-    ])
-        .catch(err => console.error(err));
+  return bootstrap(App, [
+    ...HTTP_PROVIDERS,
+    ...ROUTER_PROVIDERS,
+    provide(LocationStrategy, { useClass: HashLocationStrategy })
+  ])
+    .catch(err => console.error(err));
 }
 
 
@@ -53,21 +55,21 @@ export function main() {
  */
 
 function bootstrapDomReady() {
-    // bootstrap after document is ready
-    return document.addEventListener('DOMContentLoaded', main);
+  // bootstrap after document is ready
+  return document.addEventListener('DOMContentLoaded', main);
 }
 
 /*
  * Hot Module Reload
  * experimental version by @gdi2290
- * 
+ *
  * Checks for settings in the webpack config so that knows if Hot module reloading should be used
  */
 if ('development' === ENV && HMR === true) {
-    // activate hot module reload
-    let ngHmr = require('angular2-hmr');
-    ngHmr.hotModuleReplacement(main, module);
+  // activate hot module reload
+  let ngHmr = require('angular2-hmr');
+  ngHmr.hotModuleReplacement(main, module);
 } else {
-    // bootstrap when documetn is ready
-    document.addEventListener('DOMContentLoaded', () => main());
+  // bootstrap when documetn is ready
+  document.addEventListener('DOMContentLoaded', () => main());
 }
