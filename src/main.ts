@@ -2,16 +2,13 @@
  * Providers provided by Angular
  */
 import {provide, enableProdMode} from '@angular/core';
-import * as browser from '@angular/platform-browser';
 import {bootstrap} from '@angular/platform-browser-dynamic'
-
-// Angular 2
 import {LocationStrategy, HashLocationStrategy} from '@angular/common';
 
-//ROUTER
+// ROUTER
 import {ROUTER_PROVIDERS} from '@angular/router-deprecated';
 
-//HTTP
+// HTTP
 import {HTTP_PROVIDERS} from '@angular/http';
 
 /*
