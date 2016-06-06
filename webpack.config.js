@@ -53,6 +53,10 @@ module.exports = {
   },
 
   module: {
+    preLoaders: [{
+      test: /\.ts$/,
+      loader: "tslint"
+    }],
     loaders: [
       // Support Angular 2 async routes via .async.ts
       {
@@ -69,13 +73,13 @@ module.exports = {
       },
 
       // Support for *.json files.
-      {test: /\.json$/, loader: 'json-loader'},
+      { test: /\.json$/, loader: 'json-loader' },
 
       // Support for CSS as raw text
-      {test: /\.css$/, loader: 'raw-loader'},
+      { test: /\.css$/, loader: 'raw-loader' },
 
       // support for .html as raw text
-      {test: /\.html$/, loader: 'raw-loader', exclude: [helpers.root('src/index.html')]}
+      { test: /\.html$/, loader: 'raw-loader', exclude: [helpers.root('src/index.html')] }
 
       // if you add a loader include the resolve file extension above
     ]
@@ -102,7 +106,7 @@ module.exports = {
     //
     // See: https://webpack.github.io/docs/list-of-plugins.html#commonschunkplugin
     // See: https://github.com/webpack/docs/wiki/optimization#multi-page-app
-    new webpack.optimize.CommonsChunkPlugin({name: ['main', 'vendor', 'polyfills'], minChunks: Infinity}),
+    new webpack.optimize.CommonsChunkPlugin({ name: ['main', 'vendor', 'polyfills'], minChunks: Infinity }),
 
     // Plugin: CopyWebpackPlugin
     // Description: Copy files and directories in webpack.
@@ -110,7 +114,7 @@ module.exports = {
     // Copies project static assets.
     //
     // See: https://www.npmjs.com/package/copy-webpack-plugin
-    new CopyWebpackPlugin([{from: 'src/assets', to: 'assets'}]),
+    new CopyWebpackPlugin([{ from: 'src/assets', to: 'assets' }]),
 
     // Plugin: HtmlWebpackPlugin
     // Description: Simplifies creation of HTML files to serve your webpack bundles.
@@ -118,7 +122,7 @@ module.exports = {
     // which changes every compilation.
     //
     // See: https://github.com/ampedandwired/html-webpack-plugin
-    new HtmlWebpackPlugin({template: 'src/index.html', chunksSortMode: 'none'}),
+    new HtmlWebpackPlugin({ template: 'src/index.html', chunksSortMode: 'none' }),
 
     // Plugin: DefinePlugin
     // Description: Define free variables.
@@ -128,12 +132,12 @@ module.exports = {
     //
     // See: https://webpack.github.io/docs/list-of-plugins.html#defineplugin
     // NOTE: when adding more properties make sure you include them in custom-typings.d.ts
-    new webpack.DefinePlugin({'ENV': JSON.stringify(METADATA.ENV), 'HMR': HMR})
+    new webpack.DefinePlugin({ 'ENV': JSON.stringify(METADATA.ENV), 'HMR': HMR })
   ],
 
   // Other module loader config
   tslint: {
-    emitErrors: false,
+    emitErrors: true,
     failOnHint: false,
     resourcePath: 'src'
   },
@@ -143,7 +147,7 @@ module.exports = {
     host: METADATA.host,
     // contentBase: 'src/',
     historyApiFallback: true,
-    watchOptions: {aggregateTimeout: 300, poll: 1000}
+    watchOptions: { aggregateTimeout: 300, poll: 1000 }
   },
   // we need this due to problems with es6-shim
   node: {

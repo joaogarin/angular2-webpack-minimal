@@ -29,7 +29,7 @@
     "e2e": "ts-node node_modules/.bin/protractor",
     "e2e:live": "protractor --elementExplorer",
     "docs": "typedoc --options typedoc.json --exclude **/*.spec.ts ./src/",
-    "start": "npm run server:dev",
+    "start": "npm run server:dev:hmr",
     "typings-install": "typings install",
     "postinstall": "npm run typings-install",
     "version": "npm run build",
@@ -60,7 +60,8 @@
     "zone.js": "0.6.11"
   },
   "devDependencies": {
-    "angular2-hmr": "~0.5.7",
+    "codelyzer": "0.0.19",
+    "angular2-hmr": "~0.7.0",
     "awesome-typescript-loader": "^0.15.10",
     "compression-webpack-plugin": "^0.3.0",
     "copy-webpack-plugin": "^1.1.1",

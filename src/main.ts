@@ -2,7 +2,7 @@
  * Providers provided by Angular
  */
 import {provide, enableProdMode} from '@angular/core';
-import {bootstrap} from '@angular/platform-browser-dynamic'
+import {bootstrap} from '@angular/platform-browser-dynamic';
 import {LocationStrategy, HashLocationStrategy} from '@angular/common';
 
 // ROUTER
@@ -23,14 +23,14 @@ if ('production' === process.env.ENV) {
  * App Component
  * our top level component that holds all of our components
  */
-import {App} from './app/app';
+import {AppComponent} from './app/app';
 
 /*
  * Bootstrap our Angular app with a top level component `App` and inject
  * our Services and Providers into Angular's dependency injection
  */
 export function main() {
-  return bootstrap(App, [
+  return bootstrap(AppComponent, [
     ...HTTP_PROVIDERS,
     ...ROUTER_PROVIDERS,
     provide(LocationStrategy, { useClass: HashLocationStrategy })
@@ -59,14 +59,12 @@ function bootstrapDomReady() {
 /*
  * Hot Module Reload
  * experimental version by @gdi2290
- *
- * Checks for settings in the webpack config so that knows if Hot module reloading should be used
  */
 if ('development' === ENV && HMR === true) {
   // activate hot module reload
   let ngHmr = require('angular2-hmr');
   ngHmr.hotModuleReplacement(main, module);
 } else {
-  // bootstrap when documetn is ready
+  // bootstrap when document is ready
   document.addEventListener('DOMContentLoaded', () => main());
 }
