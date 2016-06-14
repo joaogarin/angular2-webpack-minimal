@@ -7,6 +7,7 @@ import {Component, OnInit} from '@angular/core';
  * App State service for Hot module reloading
  */
 import { AppState } from './app.service';
+import {HmrState} from 'angular2-hmr';
 
 /*
  * App Component
@@ -31,20 +32,21 @@ import { AppState } from './app.service';
 })
 export class AppComponent implements OnInit {
     name: string;
-    counter: number;
+    @HmrState() counter: number;
 
     constructor(public appState: AppState) {
-        this.name = 'Angular2 Minimal';
-        this.counter = 0;
+        this.name = 'Angular2 testing done';
     }
 
     incrementCounter() {
         let newCounter = this.counter + 1;
         this.counter = newCounter;
+        this.appState.set('counter', this.counter);
     }
 
     ngOnInit() {
         // Our API
         console.log('Initial App State', this.appState.state);
+        this.counter = this.appState.state.counter;
     }
 }
