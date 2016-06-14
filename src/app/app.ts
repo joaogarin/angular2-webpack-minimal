@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
     @HmrState() counter: number;
 
     constructor(public appState: AppState) {
-        this.name = 'Angular2 testing done';
+        this.name = 'Hello Angular2';
     }
 
     incrementCounter() {
