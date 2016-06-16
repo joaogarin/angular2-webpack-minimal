@@ -1,7 +1,7 @@
 /*
  * Angular 2 decorators and services
  */
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, Input} from '@angular/core';
 
 /**
  * App State service for Hot module reloading
@@ -31,11 +31,10 @@ import {HmrState} from 'angular2-hmr';
     `
 })
 export class AppComponent implements OnInit {
-    name: string;
+    @Input() name: string = 'Hello Angular2';
     @HmrState() counter: number;
 
     constructor(public appState: AppState) {
-        this.name = 'Hello Angular2';
     }
 
     incrementCounter() {
