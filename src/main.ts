@@ -1,12 +1,14 @@
 /*
  * Providers provided by Angular
  */
-import {provide, enableProdMode} from '@angular/core';
+import {provide, enableProdMode, PLATFORM_DIRECTIVES} from '@angular/core';
 import {bootstrap} from '@angular/platform-browser-dynamic';
 import {LocationStrategy, HashLocationStrategy} from '@angular/common';
 
 // ROUTER
-import {ROUTER_PROVIDERS} from '@angular/router-deprecated';
+import { provideRouter, ROUTER_DIRECTIVES } from '@angular/router';
+import { provideWebpack } from '@angularclass/webpack-toolkit';
+import { routes, asyncRoutes } from './app/app.routes';
 
 // HTTP
 import {HTTP_PROVIDERS} from '@angular/http';
@@ -32,7 +34,9 @@ import {AppComponent} from './app/app';
 export function main() {
   return bootstrap(AppComponent, [
     ...HTTP_PROVIDERS,
-    ...ROUTER_PROVIDERS,
+    provide(PLATFORM_DIRECTIVES, { useValue: [ROUTER_DIRECTIVES], multi: true }),
+    provideRouter(routes),
+    provideWebpack(asyncRoutes),
     provide(LocationStrategy, { useClass: HashLocationStrategy })
   ])
     .catch(err => console.error(err));

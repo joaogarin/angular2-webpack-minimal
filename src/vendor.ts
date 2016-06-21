@@ -8,6 +8,7 @@ import '@angular/platform-browser';
 import '@angular/core';
 import '@angular/http';
 import '@angular/router';
+import '@angularclass/webpack-toolkit';
 
 // RxJS
 import 'rxjs/add/operator/map';
