@@ -28,10 +28,13 @@ require('rxjs/Rx');
 
 var testing = require('@angular/core/testing');
 var browser = require('@angular/platform-browser-dynamic/testing');
+var router_providers = require('@angular/router');
+var router_testing = require('@angular/router');
 
 testing.setBaseTestProviders(
   browser.TEST_BROWSER_DYNAMIC_PLATFORM_PROVIDERS,
-  browser.TEST_BROWSER_DYNAMIC_APPLICATION_PROVIDERS
+  browser.TEST_BROWSER_DYNAMIC_APPLICATION_PROVIDERS,
+  router_providers.ROUTER_DIRECTIVES
 );
 
 Object.assign(global, testing);

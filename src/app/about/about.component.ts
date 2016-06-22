@@ -21,11 +21,12 @@ import {HmrState} from 'angular2-hmr';
     template: `
     <div>
        <h1>About page</h1>
-       <p>This page is loaded lazyly</p>
+       <p>This page is loaded {{lazy}}</p>
     </div>
     `
 })
 export class AboutComponent {
+    lazy: string = 'lazyly';
     
     constructor() {
     }

@@ -13,22 +13,20 @@ import {
     ComponentFixture
 } from '@angular/compiler/testing';
 import { Component } from '@angular/core';
+
+/**
+ * Import the app component and dependency
+ */
 import {AppComponent} from './app';
 
 describe('App component', () => {
 
-    @Component({
-        template: ``,
-        directives: [AppComponent]
-    })
-    class AppTest { }
+    // provide our implementations or mocks to the dependency injector
+    beforeEachProviders(() => [
+        AppComponent
+    ]);
 
-    it('shoud render with name', async(inject([TestComponentBuilder], (tcb) => {
-        tcb.overrideTemplate(AppTest, '<wm-app></wm-app>')
-            .createAsync(AppTest).then((fixture: ComponentFixture<AppTest>) => {
-                fixture.detectChanges();
-                let compiled = fixture.debugElement.nativeElement;
-                expect(compiled.querySelector('h1')).toHaveText('Hello Angular2');
-            });
-    })));
+    it('should have a name', inject([AppComponent], (app) => {
+        expect(app.name).toEqual('Hello Angular2');
+    }));
 });
