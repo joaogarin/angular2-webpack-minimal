@@ -13,19 +13,19 @@ import {Component, OnInit} from '@angular/core';
   template: `
     <nav>
       <span>
-        <a [routerLink]=" ['./'] ">
+        <a [routerLink]="['/']">
           Index
         </a>
       </span>
       |
       <span>
-        <a [routerLink]=" ['./home'] ">
+        <a [routerLink]="['/home']">
           Home
         </a>
       </span>
       |
       <span>
-        <a [routerLink]=" ['./about'] ">
+        <a [routerLink]="['/about']">
           About
         </a>
       </span>

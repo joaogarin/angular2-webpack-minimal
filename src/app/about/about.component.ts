@@ -1,13 +1,7 @@
 /*
  * Angular 2 decorators and services
  */
-import {Component, OnInit, Input} from '@angular/core';
-
-/**
- * App State service for Hot module reloading
- */
-import { AppState } from './../app.service';
-import {HmrState} from 'angular2-hmr';
+import { Component } from '@angular/core';
 
 /*
  * Home Component
@@ -16,18 +10,16 @@ import {HmrState} from 'angular2-hmr';
 @Component({
     // The selector is what angular internally uses
     selector: 'wm-about', // <app></app>
-    providers: [AppState],
     // The template for our app
     template: `
     <div>
        <h1>About page</h1>
-       <p>This page is loaded {{lazy}}</p>
+       <p>This page is : {{aboutMsg}}</p>
     </div>
     `
 })
 export class AboutComponent {
-    lazy: string = 'lazyly';
-    
+    aboutMsg: string = 'About';
     constructor() {
     }
 }

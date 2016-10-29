@@ -11,6 +11,9 @@ const ProvidePlugin = require('webpack/lib/ProvidePlugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
+const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
+const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
+
 /**
  * Webpack Constants
  */
@@ -22,6 +25,11 @@ const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
  * See: http://webpack.github.io/docs/configuration.html#cli
  */
 module.exports = {
+
+    // our angular app
+    entry: {
+        'main': './src/main.ts',
+    },
 
     /**
      * Source map for Karma from the help of karma-sourcemap-loader &  karma-webpack
@@ -38,17 +46,15 @@ module.exports = {
      */
     resolve: {
 
-        /**
-         * An array of extensions that should be used to resolve modules.
-         *
-         * See: http://webpack.github.io/docs/configuration.html#resolve-extensions
-         */
-        extensions: ['', '.ts', '.js'],
+        /*
+        * An array of extensions that should be used to resolve modules.
+        *
+        * See: http://webpack.github.io/docs/configuration.html#resolve-extensions
+        */
+        extensions: ['.ts', '.js', '.json'],
 
-        /**
-         * Make sure root is src
-         */
-        root: helpers.root('src'),
+        // An array of directory names to be resolved to the current directory
+        modules: [helpers.root('src'), 'node_modules'],
 
     },
 
@@ -59,12 +65,7 @@ module.exports = {
      */
     module: {
 
-        /**
-         * An array of applied pre and post loaders.
-         *
-         * See: http://webpack.github.io/docs/configuration.html#module-preloaders-module-postloaders
-         */
-        preLoaders: [
+        rules: [
 
             /**
              * Tslint loader support for *.ts files
@@ -72,6 +73,7 @@ module.exports = {
              * See: https://github.com/wbuchwalter/tslint-loader
              */
             {
+                enforce: 'pre',
                 test: /\.ts$/,
                 loader: 'tslint-loader',
                 exclude: [helpers.root('node_modules')]
@@ -84,6 +86,7 @@ module.exports = {
              * See: https://github.com/webpack/source-map-loader
              */
             {
+                enforce: 'pre',
                 test: /\.js$/,
                 loader: 'source-map-loader',
                 exclude: [
@@ -91,19 +94,7 @@ module.exports = {
                     helpers.root('node_modules/rxjs'),
                     helpers.root('node_modules/@angular')
                 ]
-            }
-
-        ],
-
-        /**
-         * An array of automatically applied loaders.
-         *
-         * IMPORTANT: The loaders here are resolved relative to the resource which they are applied to.
-         * This means they are not resolved relative to the configuration file.
-         *
-         * See: http://webpack.github.io/docs/configuration.html#module-loaders
-         */
-        loaders: [
+            },
 
             /**
              * Typescript loader support for .ts and Angular 2 async routes via .async.ts
@@ -114,6 +105,9 @@ module.exports = {
                 test: /\.ts$/,
                 loader: 'awesome-typescript-loader',
                 query: {
+                    // use inline sourcemaps for "karma-remap-coverage" reporter
+                    sourceMap: false,
+                    inlineSourceMap: true,
                     compilerOptions: {
 
                         // Remove TypeScript helpers to be injected
@@ -125,83 +119,40 @@ module.exports = {
                 exclude: [/\.e2e\.ts$/]
             },
 
-            // Support for *.json files.
+            /**
+             * Json loader support for *.json files.
+             *
+             * See: https://github.com/webpack/json-loader
+             */
             {
                 test: /\.json$/,
-                loader: 'json-loader'
+                loader: 'json-loader',
+                exclude: [helpers.root('src/index.html')]
             },
 
-            // Support for CSS as raw text
+            /**
+             * Raw loader support for *.css files
+             * Returns file content as string
+             *
+             * See: https://github.com/webpack/raw-loader
+             */
             {
                 test: /\.css$/,
-                loader: 'raw-loader'
+                loaders: ['to-string-loader', 'css-loader'],
+                exclude: [helpers.root('src/index.html')]
             },
 
-            // support for .html as raw text
+            /**
+             * Raw loader support for *.html
+             * Returns file content as string
+             *
+             * See: https://github.com/webpack/raw-loader
+             */
             {
                 test: /\.html$/,
                 loader: 'raw-loader',
-                exclude: [helpers.root('app/index.html')]
+                exclude: [helpers.root('src/index.html')]
             },
-
-            // Support for CSS as raw text
-            {
-                test: /\.css$/,
-                loader: ExtractTextPlugin.extract(['css'])
-            },
-
-            // General sass should be included in a css file
-            {
-                test: /\.scss$/,
-                loader: ExtractTextPlugin.extract(['css', 'sass']),
-                exclude: [
-                    helpers.root('src/app/components'),
-                    helpers.root('src/app/projects'),
-                    helpers.root('src/app/home'),
-                    helpers.root('src/app/shared'),
-                    helpers.root('src/app/login'),
-                ]
-            },
-
-            // Component specific sass should be included in the component
-            {
-                test: /\.scss$/,
-                loaders: ["css", "sass"],
-                exclude: [helpers.root('src/app/sass')]
-            },
-
-            // Inline base64 URLs for <=8k images, direct URLs for the rest
-            {
-                test: /\.(png|jpg|jpeg)$/,
-                loader: 'url-loader?limit=10000'
-            },
-
-            // Font handeling - used in fontawesome and other fonts
-            , {
-                test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
-                loader: "url?limit=10000&mimetype=application/font-woff"
-            }, {
-                test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
-                loader: "url?limit=10000&mimetype=application/font-woff"
-            }, {
-                test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-                loader: "url?limit=10000&mimetype=application/octet-stream"
-            }, {
-                test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-                loader: "file"
-            }, {
-                test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-                loader: "url?limit=10000&mimetype=image/svg+xml"
-            }
-
-        ],
-
-        /**
-         * An array of applied pre and post loaders.
-         *
-         * See: http://webpack.github.io/docs/configuration.html#module-preloaders-module-postloaders
-         */
-        postLoaders: [
 
             /**
              * Instruments JS files with Istanbul for subsequent code coverage reporting.
@@ -210,7 +161,9 @@ module.exports = {
              * See: https://github.com/deepsweet/istanbul-instrumenter-loader
              */
             {
-                test: /\.(js|ts)$/, loader: 'istanbul-instrumenter-loader',
+                enforce: 'post',
+                test: /\.(js|ts)$/,
+                loader: 'istanbul-instrumenter-loader',
                 include: helpers.root('src'),
                 exclude: [
                     /\.(e2e|spec)\.ts$/,
@@ -247,32 +200,52 @@ module.exports = {
                 'HMR': false,
             }
         }),
-
+        /**
+         * Plugin: ContextReplacementPlugin
+         * Description: Provides context to Angular's use of System.import
+         * 
+         * See: https://webpack.github.io/docs/list-of-plugins.html#contextreplacementplugin
+         * See: https://github.com/angular/angular/issues/11580
+         */
+        new ContextReplacementPlugin(
+            // The (\\|\/) piece accounts for path separators in *nix and Windows
+            /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
+            helpers.root('src') // location of your src
+        ),
+        /**
+         * Plugin LoaderOptionsPlugin (experimental)
+         *
+         * See: https://gist.github.com/sokra/27b24881210b56bbaff7
+         */
+        new LoaderOptionsPlugin({
+            debug: true,
+            options: {
+                /**
+                 * Static analysis linter for TypeScript advanced options configuration
+                 * Description: An extensible linter for the TypeScript language.
+                 *
+                 * See: https://github.com/wbuchwalter/tslint-loader
+                 */
+                tslint: {
+                    emitErrors: false,
+                    failOnHint: false,
+                    resourcePath: 'src'
+                },
+            }
+        }),
 
     ],
-
-    /**
-     * Static analysis linter for TypeScript advanced options configuration
-     * Description: An extensible linter for the TypeScript language.
-     *
-     * See: https://github.com/wbuchwalter/tslint-loader
-     */
-    tslint: {
-        emitErrors: false,
-        failOnHint: false,
-        resourcePath: 'src'
-    },
-
     /**
      * Include polyfills or mocks for various node stuff
      * Description: Node configuration
      *
      * See: https://webpack.github.io/docs/configuration.html#node
      */
+    // we need this due to problems with es6-shim
     node: {
-        global: 'window',
-        process: false,
+        global: true,
         crypto: 'empty',
+        process: true,
         module: false,
         clearImmediate: false,
         setImmediate: false
