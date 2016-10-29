@@ -17,9 +17,11 @@
     "build:dev": "webpack --progress --profile --colors --display-error-details --display-cached",
     "server": "npm run server:dev:hmr",
     "server:dev": "webpack-dev-server --config webpack.config.js --progress --profile --watch --content-base src/",
+    "server:aot": "webpack-dev-server --config webpack.config.aot.js --progress --profile --watch --content-base src/",
     "server:dev:hmr": "npm run server:dev -- --inline --hot",
     "server:prod": "http-server dist --cors",
     "start": "npm run server:dev:hmr",
+    "start:aot": "npm run server:aot",
     "webpack-test": "webpack --config webpack.test.js  --progress --profile",
     "test": "karma start"
   },

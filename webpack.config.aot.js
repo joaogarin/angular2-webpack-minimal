@@ -12,6 +12,8 @@ var ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 
+const ngtools = require('@ngtools/webpack');
+
 const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
 const HMR = helpers.hasProcessFlag('hot');
 var METADATA = {
@@ -38,7 +40,7 @@ module.exports = function (options) {
     entry: {
       'polyfills': './src/polyfills.ts',
       'vendor': './src/vendor.ts',
-      'main': './src/main.ts',
+      'main': './src/main.aot.ts',
     },
 
     // Config for our build files
@@ -69,12 +71,9 @@ module.exports = function (options) {
     },
     module: {
       rules: [
-        // Support for .ts files.
-        {
-          test: /\.ts$/,
-          loaders: ['awesome-typescript-loader', 'angular2-template-loader'],
-          exclude: [/\.(spec|e2e)\.ts$/]
-        },
+        { test: /\.scss$/, loaders: ['raw-loader', 'sass-loader'] },
+        { test: /\.css$/, loader: 'raw-loader' },
+        { test: /\.ts$/, loader: '@ngtools/webpack' },
 
         // Support for *.json files.
         {
@@ -84,12 +83,6 @@ module.exports = function (options) {
 
         // support for .html as raw text
         { test: /\.html$/, loader: 'raw-loader', exclude: [helpers.root('src/index.html')] },
-
-        // Component specific sass should be included in the component
-        {
-          test: /\.scss$/,
-          loaders: ['raw-loader', 'sass-loader'],
-        },
       ]
     },
 
